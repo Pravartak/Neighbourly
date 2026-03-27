@@ -31,6 +31,8 @@ export const metadata: Metadata = {
   },
 }
 
+import { QuestProvider } from '@/context/QuestContext'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,7 +41,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${jetbrainsMono.variable} font-mono antialiased`}>
-        {children}
+        <QuestProvider>
+          {children}
+        </QuestProvider>
         <Analytics />
       </body>
     </html>

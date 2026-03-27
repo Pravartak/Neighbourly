@@ -4,16 +4,26 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Swords } from "lucide-react"
 import { useState } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/quests", label: "Browse Quests" },
-  { href: "#post", label: "Post Quest" },
+  { href: "/redeem", label: "Redeem Rewards" },
+  { href: "/quests/new", label: "Post Quest" },
   { href: "#my-quests", label: "My Quests" },
 ]
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  
+  // Mock logged-in user state
+  const user = {
+    name: "Alex",
+    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop",
+    fallback: "AJ"
+  }
+  const isLoggedIn = true // Mocked for demonstration
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
@@ -39,15 +49,25 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
-          <Link href="/auth">
-            <Button 
-              className="bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform"
-            >
-              Start Questing
-            </Button>
-          </Link>
+        {/* CTA Section */}
+        <div className="hidden md:flex items-center gap-4">
+          {!isLoggedIn ? (
+            <Link href="/auth">
+              <Button 
+                className="bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform"
+              >
+                Start Questing
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Avatar className="h-9 w-9 border border-border">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.fallback}</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">{user.name}</span>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -74,13 +94,32 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
-              <Button 
-                className="mt-2 w-full bg-primary text-primary-foreground font-semibold"
+            {!isLoggedIn ? (
+              <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
+                <Button 
+                  className="mt-2 w-full bg-primary text-primary-foreground font-semibold"
+                >
+                  Start Questing
+                </Button>
+              </Link>
+            ) : (
+              <Link 
+                href="/profile" 
+                className="mt-2 flex items-center justify-between p-3 bg-muted rounded border border-border/50"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Start Questing
-              </Button>
-            </Link>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 border border-border">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.fallback}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold">{user.name}</span>
+                    <span className="text-xs text-muted-foreground">View Profile</span>
+                  </div>
+                </div>
+              </Link>
+            )}
           </nav>
         </div>
       )}

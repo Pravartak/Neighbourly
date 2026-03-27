@@ -26,151 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-// Quest data
-const allQuests = [
-  {
-    id: 1,
-    title: "Dog Walking Adventure",
-    description: "Take Max for his afternoon walk around the park. He loves meeting other dogs!",
-    reward: 20,
-    category: "Errands",
-    difficulty: "easy" as const,
-    location: "0.2 mi",
-    time: "45 min",
-    status: "open" as const,
-  },
-  {
-    id: 2,
-    title: "Community Garden Cleanup",
-    description: "Help clear weeds and plant new flowers in the neighborhood community garden.",
-    reward: 35,
-    category: "Nature",
-    difficulty: "easy" as const,
-    location: "0.4 mi",
-    time: "2 hrs",
-    status: "open" as const,
-  },
-  {
-    id: 3,
-    title: "Photography Session",
-    description: "Take professional photos of a local bakery for their new website and social media.",
-    reward: 75,
-    category: "Creative",
-    difficulty: "medium" as const,
-    location: "0.8 mi",
-    time: "2 hrs",
-    status: "open" as const,
-  },
-  {
-    id: 4,
-    title: "Math Tutoring Session",
-    description: "Help a high school student with calculus homework and exam prep.",
-    reward: 60,
-    category: "Learn",
-    difficulty: "medium" as const,
-    location: "1.0 mi",
-    time: "2 hrs",
-    status: "open" as const,
-  },
-  {
-    id: 5,
-    title: "Emergency Grocery Run",
-    description: "Pick up essential groceries for an elderly neighbor who cannot leave home.",
-    reward: 40,
-    category: "Urgent",
-    difficulty: "easy" as const,
-    location: "0.3 mi",
-    time: "1 hr",
-    status: "open" as const,
-  },
-  {
-    id: 6,
-    title: "Furniture Assembly",
-    description: "Assemble a new IKEA wardrobe and desk set. Tools provided.",
-    reward: 85,
-    category: "Errands",
-    difficulty: "hard" as const,
-    location: "1.5 mi",
-    time: "3 hrs",
-    status: "open" as const,
-  },
-  {
-    id: 7,
-    title: "Trail Restoration",
-    description: "Help restore hiking trails in the local nature reserve. Heavy lifting required.",
-    reward: 100,
-    category: "Nature",
-    difficulty: "hard" as const,
-    location: "2.5 mi",
-    time: "4 hrs",
-    status: "open" as const,
-  },
-  {
-    id: 8,
-    title: "Logo Design",
-    description: "Create a modern logo for a new local coffee shop opening next month.",
-    reward: 120,
-    category: "Creative",
-    difficulty: "hard" as const,
-    location: "Remote",
-    time: "Flexible",
-    status: "open" as const,
-  },
-  {
-    id: 9,
-    title: "Piano Lessons",
-    description: "Teach basic piano to a beginner. Must have own keyboard or access to one.",
-    reward: 50,
-    category: "Learn",
-    difficulty: "medium" as const,
-    location: "0.6 mi",
-    time: "1.5 hrs",
-    status: "in-progress" as const,
-  },
-  {
-    id: 10,
-    title: "Pet Sitting Emergency",
-    description: "Watch two cats for the weekend. Owner had a family emergency.",
-    reward: 90,
-    category: "Urgent",
-    difficulty: "medium" as const,
-    location: "0.5 mi",
-    time: "Weekend",
-    status: "open" as const,
-  },
-  {
-    id: 11,
-    title: "Package Delivery",
-    description: "Pick up a package from the post office and deliver it safely to the address.",
-    reward: 15,
-    category: "Errands",
-    difficulty: "easy" as const,
-    location: "0.3 mi",
-    time: "30 min",
-    status: "open" as const,
-  },
-  {
-    id: 12,
-    title: "Bird House Building",
-    description: "Build and install bird houses in the local park. Materials provided.",
-    reward: 55,
-    category: "Nature",
-    difficulty: "medium" as const,
-    location: "1.2 mi",
-    time: "3 hrs",
-    status: "completed" as const,
-  },
-]
-
-const categories = [
-  { id: "all", name: "All Quests", icon: null, count: allQuests.length },
-  { id: "Errands", name: "Errands", icon: ShoppingBag, count: allQuests.filter(q => q.category === "Errands").length },
-  { id: "Nature", name: "Nature", icon: TreePine, count: allQuests.filter(q => q.category === "Nature").length },
-  { id: "Creative", name: "Creative", icon: Palette, count: allQuests.filter(q => q.category === "Creative").length },
-  { id: "Learn", name: "Learn & Teach", icon: GraduationCap, count: allQuests.filter(q => q.category === "Learn").length },
-  { id: "Urgent", name: "Urgent", icon: AlertTriangle, count: allQuests.filter(q => q.category === "Urgent").length },
-]
+import { useQuests, type Quest } from "@/context/QuestContext"
 
 const difficultyConfig = {
   easy: { color: "bg-easy/20 text-easy border-easy/30", label: "Easy" },
@@ -185,14 +41,24 @@ const statusConfig = {
 }
 
 export default function QuestsPage() {
+  const { quests } = useQuests()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedDifficulty, setSelectedDifficulty] = useState("all")
   const [selectedStatus, setSelectedStatus] = useState("all")
   const [showFilters, setShowFilters] = useState(false)
 
+  const categories = useMemo(() => [
+    { id: "all", name: "All Quests", icon: null, count: quests.length },
+    { id: "Errands", name: "Errands", icon: ShoppingBag, count: quests.filter(q => q.category === "Errands").length },
+    { id: "Nature", name: "Nature", icon: TreePine, count: quests.filter(q => q.category === "Nature").length },
+    { id: "Creative", name: "Creative", icon: Palette, count: quests.filter(q => q.category === "Creative").length },
+    { id: "Learn", name: "Learn & Teach", icon: GraduationCap, count: quests.filter(q => q.category === "Learn").length },
+    { id: "Urgent", name: "Urgent", icon: AlertTriangle, count: quests.filter(q => q.category === "Urgent").length },
+  ], [quests])
+
   const filteredQuests = useMemo(() => {
-    return allQuests.filter((quest) => {
+    return quests.filter((quest) => {
       const matchesSearch = quest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         quest.description.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesCategory = selectedCategory === "all" || quest.category === selectedCategory
@@ -200,7 +66,7 @@ export default function QuestsPage() {
       const matchesStatus = selectedStatus === "all" || quest.status === selectedStatus
       return matchesSearch && matchesCategory && matchesDifficulty && matchesStatus
     })
-  }, [searchQuery, selectedCategory, selectedDifficulty, selectedStatus])
+  }, [quests, searchQuery, selectedCategory, selectedDifficulty, selectedStatus])
 
   const clearFilters = () => {
     setSearchQuery("")
@@ -380,9 +246,11 @@ export default function QuestsPage() {
   )
 }
 
-function QuestCard({ quest }: { quest: typeof allQuests[0] }) {
+function QuestCard({ quest }: { quest: Quest }) {
   const difficulty = difficultyConfig[quest.difficulty]
   const status = statusConfig[quest.status]
+
+  const { acceptQuest } = useQuests()
 
   return (
     <div className="group relative rounded border border-border/50 bg-card/60 backdrop-blur-sm p-5 transition-all duration-300 hover:border-primary/50 hover:bg-card/80 hover:-translate-y-1 hover:shadow-lg">
@@ -437,6 +305,7 @@ function QuestCard({ quest }: { quest: typeof allQuests[0] }) {
       {/* Accept Button */}
       {quest.status === "open" && (
         <Button 
+          onClick={() => acceptQuest(quest.id)}
           className="w-full mt-4 bg-primary/80 text-primary-foreground font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary"
         >
           Accept Quest
@@ -445,3 +314,5 @@ function QuestCard({ quest }: { quest: typeof allQuests[0] }) {
     </div>
   )
 }
+
+
